@@ -247,7 +247,8 @@
 
     const confettiInstance = confetti.create(confettiCanvas, {
       resize: false,
-      useWorker: true
+      useWorker: true,
+      disableForReducedMotion: false
     });
 
     let fireworksInterval = null;
@@ -255,18 +256,34 @@
     function fullScreenConfettiLoop() {
       if (fireworksInterval) return;
 
+      // Detect mobile for optimized confetti
+      const isMobile = window.innerWidth < 768;
+      const particleCount = isMobile ? 100 : 200;
+      const interval = isMobile ? 400 : 300;
+
+      // Initial burst
+      confettiInstance({
+        particleCount: particleCount * 2,
+        spread: 100,
+        startVelocity: 50,
+        origin: { x: 0.5, y: 0.5 }
+      });
+
       fireworksInterval = setInterval(() => {
         confettiInstance({
-          particleCount: 200,
+          particleCount: particleCount,
           spread: 90,
           startVelocity: 45,
           ticks: 180,
+          gravity: 1,
+          scalar: 1,
+          drift: 0,
           origin: {
             x: Math.random(),
             y: Math.random() * 0.3
           }
         });
-      }, 300);
+      }, interval);
     }
 
     /* ---------- YES BUTTON GROWS ---------- */
@@ -355,8 +372,13 @@
       document.querySelector('.art').style.display = "none";
       document.querySelector('h1').style.display = "none";
       result.style.display = "block";
+      
+      // Force canvas resize and small delay for mobile
       resizeConfettiCanvas();
-      fullScreenConfettiLoop();
+      setTimeout(() => {
+        resizeConfettiCanvas();
+        fullScreenConfettiLoop();
+      }, 100);
     });
   </script>
 </body>
