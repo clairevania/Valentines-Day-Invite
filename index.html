@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
   <title>Will you be my Valentine?</title>
 
   <!-- Confetti library -->
@@ -17,7 +17,10 @@
       --yesHover: #ff1f68;
     }
 
-    * { box-sizing: border-box; }
+    * { 
+      box-sizing: border-box;
+      -webkit-touch-callout: none;
+    }
 
     body {
       margin: 0;
@@ -28,6 +31,9 @@
       font-family: system-ui, sans-serif;
       overflow: hidden;
       padding: 16px;
+      position: fixed;
+      width: 100%;
+      height: 100%;
     }
 
     /* FULL-SCREEN CONFETTI CANVAS */
@@ -41,9 +47,9 @@
     }
 
     .card {
-      width: min(900px, 200vw);
-      padding: 40px 30px;
-      
+      width: min(900px, 100%);
+      max-width: 100%;
+      padding: clamp(20px, 5vw, 40px) clamp(15px, 4vw, 30px);
       background: var(--card);
       backdrop-filter: blur(10px);
       border-radius: 22px;
@@ -52,21 +58,25 @@
     }
 
     .art {
-      width: min(260px, 80vw);
+      width: min(260px, 70vw);
+      max-width: 200px;
       margin: 0 auto 10px;
       display: block;
       filter: drop-shadow(0 10px 14px rgba(0,0,0,.12));
     }
 
     h1 {
-      font-size: clamp(26px, 4vw, 40px);
+      font-size: clamp(22px, 5.5vw, 40px);
       margin: 12px 0 18px;
+      line-height: 1.3;
+      padding: 0 10px;
     }
 
     .button-zone {
       position: relative;
-      width: min(520px, 92%);
-      height: 150px;
+      width: 100%;
+      max-width: 520px;
+      height: clamp(120px, 30vh, 180px);
       margin: 0 auto;
       touch-action: none;
     }
@@ -75,8 +85,8 @@
       position: absolute;
       top: 50%;
       transform: translateY(-50%);
-      padding: 16px 24px;
-      font-size: 18px;
+      padding: clamp(12px, 3vw, 16px) clamp(20px, 5vw, 24px);
+      font-size: clamp(16px, 4vw, 18px);
       font-weight: 800;
       border-radius: 999px;
       border: none;
@@ -85,15 +95,18 @@
       user-select: none;
       -webkit-tap-highlight-color: transparent;
       transition: transform .12s ease, background .12s ease;
+      white-space: nowrap;
     }
 
     #yesBtn {
-      left: 18%;
+      left: 10%;
       background: var(--yes);
       color: #fff;
       z-index: 10;
     }
-    #yesBtn:hover { background: var(--yesHover); }
+    #yesBtn:hover, #yesBtn:active { 
+      background: var(--yesHover); 
+    }
     
     #yesBtn.fullscreen {
       position: fixed;
@@ -102,18 +115,23 @@
       transform: translate(-50%, -50%) !important;
       border-radius: 0;
       transition: all 0.8s ease;
+      width: 300vw !important;
+      height: 300vh !important;
     }
 
     #noBtn {
-      left: 62%;
+      right: 10%;
+      left: auto;
       background: #e5e7eb;
       color: #111827;
     }
 
     .hint {
       margin-top: 10px;
-      font-size: 13px;
+      font-size: clamp(11px, 3vw, 13px);
       opacity: .7;
+      padding: 0 10px;
+      line-height: 1.4;
     }
 
     .result {
@@ -123,12 +141,14 @@
     }
 
     .result h2 {
-      font-size: clamp(30px, 4.5vw, 46px);
+      font-size: clamp(26px, 6vw, 46px);
       margin: 10px 0;
+      line-height: 1.2;
     }
 
     .fireworks {
-      width: min(380px, 90vw);
+      width: min(380px, 85vw);
+      max-width: 300px;
       margin: 0 auto;
       display: block;
     }
@@ -136,6 +156,37 @@
     @keyframes pop {
       from { transform: scale(.96); opacity: 0; }
       to { transform: scale(1); opacity: 1; }
+    }
+
+    /* Mobile-specific adjustments */
+    @media (max-width: 480px) {
+      .card {
+        padding: 20px 15px;
+      }
+
+      .button-zone {
+        height: 140px;
+      }
+
+      #yesBtn {
+        left: 8%;
+      }
+
+      #noBtn {
+        right: 8%;
+      }
+    }
+
+    /* Very small screens */
+    @media (max-width: 360px) {
+      h1 {
+        font-size: 20px;
+      }
+
+      button {
+        padding: 10px 18px;
+        font-size: 15px;
+      }
     }
   </style>
 </head>
@@ -152,7 +203,6 @@
     alt="Jumping heart"
     />
 
-
     <h1>Cutieee will you be my valentine ? ❤️</h1>
 
     <section class="button-zone" id="zone">
@@ -161,7 +211,7 @@
     </section>
 
     <!-- HINT -->
-    <div class="hint" id="hint"> It will be an acheivement if you are able to click no, I challenge you !😏</div>
+    <div class="hint" id="hint">It will be an achievement if you are able to click no, I challenge you !😏</div>
 
     <section class="result" id="result">
       <h2>I knew it 🎉</h2>
@@ -203,22 +253,21 @@
     let fireworksInterval = null;
 
     function fullScreenConfettiLoop() {
-    if (fireworksInterval) return; // prevent multiple loops
+      if (fireworksInterval) return;
 
-    fireworksInterval = setInterval(() => {
+      fireworksInterval = setInterval(() => {
         confettiInstance({
-        particleCount: 200,
-        spread: 90,
-        startVelocity: 45,
-        ticks: 180,
-        origin: {
+          particleCount: 200,
+          spread: 90,
+          startVelocity: 45,
+          ticks: 180,
+          origin: {
             x: Math.random(),
             y: Math.random() * 0.3
-        }
+          }
         });
-    }, 300); // loop every 600ms
+      }, 300);
     }
-
 
     /* ---------- YES BUTTON GROWS ---------- */
     let yesScale = 1;
@@ -230,11 +279,6 @@
       // When button gets really big, make it cover the full screen
       if (yesScale >= 8) {
         yesBtn.classList.add('fullscreen');
-        const screenWidth = window.innerWidth;
-        const screenHeight = window.innerHeight;
-        const size = Math.max(screenWidth, screenHeight) * 2;
-        yesBtn.style.width = size + 'px';
-        yesBtn.style.height = size + 'px';
       }
     }
 
@@ -253,18 +297,24 @@
       dx /= mag;
       dy /= mag;
 
-      let newLeft = (b.left - z.left) + dx * 150;
-      let newTop  = (b.top - z.top) + dy * 150;
+      // Larger escape distance on mobile for better touch interaction
+      const escapeDistance = window.innerWidth < 768 ? 180 : 150;
+      let newLeft = (b.left - z.left) + dx * escapeDistance;
+      let newTop  = (b.top - z.top) + dy * escapeDistance;
 
       newLeft = clamp(newLeft, 0, z.width - b.width);
       newTop  = clamp(newTop, 0, z.height - b.height);
 
       noBtn.style.left = newLeft + "px";
       noBtn.style.top = newTop + "px";
+      noBtn.style.right = "auto";
       noBtn.style.transform = "none";
 
       growYes();
     }
+
+    // Detect radius for button movement - larger on mobile
+    const detectionRadius = window.innerWidth < 768 ? 160 : 140;
 
     zone.addEventListener("pointermove", e => {
       const b = noBtn.getBoundingClientRect();
@@ -272,12 +322,30 @@
         (b.left + b.width / 2) - e.clientX,
         (b.top + b.height / 2) - e.clientY
       );
-      if (d < 140) moveNo(e.clientX, e.clientY);
+      if (d < detectionRadius) moveNo(e.clientX, e.clientY);
+    });
+
+    // Also trigger on touch start for better mobile interaction
+    zone.addEventListener("touchstart", e => {
+      const touch = e.touches[0];
+      const b = noBtn.getBoundingClientRect();
+      const d = Math.hypot(
+        (b.left + b.width / 2) - touch.clientX,
+        (b.top + b.height / 2) - touch.clientY
+      );
+      if (d < detectionRadius) {
+        moveNo(touch.clientX, touch.clientY);
+      }
     });
 
     noBtn.addEventListener("click", e => {
       e.preventDefault();
       growYes();
+    });
+
+    // Prevent context menu on long press
+    noBtn.addEventListener("contextmenu", e => {
+      e.preventDefault();
     });
 
     /* ---------- YES CLICK ---------- */
@@ -294,4 +362,3 @@
 </body>
 
 </html>
-
