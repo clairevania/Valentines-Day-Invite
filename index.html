@@ -10,11 +10,13 @@
 
   <style>
     :root {
-      --bg1: #ffd6e7;
-      --bg2: #ffeef6;
-      --card: #ffffffcc;
-      --yes: #ff3b7a;
-      --yesHover: #ff1f68;
+      --bg1: #c41e3a;
+      --bg2: #8b0000;
+      --card: #ffffffee;
+      --yes: #dc143c;
+      --yesHover: #b01030;
+      --textPrimary: #ffffff;
+      --textOnCard: #2d0a0f;
     }
 
     * { 
@@ -27,13 +29,14 @@
       min-height: 100svh;
       display: grid;
       place-items: center;
-      background: radial-gradient(circle at top, var(--bg2), var(--bg1));
+      background: radial-gradient(circle at top, var(--bg1), var(--bg2));
       font-family: system-ui, sans-serif;
       overflow: hidden;
       padding: 16px;
       position: fixed;
       width: 100%;
       height: 100%;
+      color: var(--textPrimary);
     }
 
     .card {
@@ -44,7 +47,191 @@
       backdrop-filter: blur(10px);
       border-radius: 22px;
       text-align: center;
-      box-shadow: 0 18px 60px rgba(0,0,0,.15);
+      box-shadow: 0 18px 60px rgba(0,0,0,.4);
+      color: var(--textOnCard);
+    }
+
+    /* Intro Screen Styles */
+    #introScreen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 300px;
+    }
+
+    #typewriterText {
+      font-size: clamp(24px, 6vw, 42px);
+      font-weight: 600;
+      color: var(--yes);
+      line-height: 1.4;
+      padding: 0 10px;
+      margin-bottom: 60px;
+      text-align: center;
+    }
+
+    #typewriterText::after {
+      content: '|';
+      animation: blink 0.7s infinite;
+      margin-left: 2px;
+    }
+
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0; }
+    }
+
+    #continueBtn {
+      padding: 16px 32px;
+      font-size: clamp(18px, 4.5vw, 22px);
+      font-weight: 700;
+      background: var(--yes);
+      color: white;
+      border: none;
+      border-radius: 999px;
+      cursor: pointer;
+      box-shadow: 0 10px 24px rgba(220, 20, 60, 0.4);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.3s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    #continueBtn.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    #continueBtn:hover, #continueBtn:active {
+      background: var(--yesHover);
+      transform: translateY(-2px);
+      box-shadow: 0 14px 28px rgba(220, 20, 60, 0.5);
+    }
+
+    /* But First Screen Styles */
+    #butFirstScreen {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 300px;
+    }
+
+    #butFirstText {
+      font-size: clamp(32px, 8vw, 56px);
+      font-weight: 700;
+      color: var(--yes);
+      line-height: 1.4;
+      padding: 0 10px;
+      text-align: center;
+      opacity: 0;
+      transform: scale(0.8);
+      animation: fadeInScale 0.8s ease forwards;
+    }
+
+    @keyframes fadeInScale {
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    /* Loading Screen Styles */
+    #loadingScreen {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 30px;
+    }
+
+    #heartContainer {
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    #beatingHeart {
+      width: clamp(120px, 30vw, 180px);
+      height: clamp(120px, 30vw, 180px);
+      font-size: clamp(100px, 25vw, 150px);
+      animation: heartbeat 1.5s ease-in-out infinite;
+      transition: transform 0.1s ease;
+    }
+
+    #heartContainer:active #beatingHeart {
+      transform: scale(0.9);
+    }
+
+    @keyframes heartbeat {
+      0%, 100% { transform: scale(1); }
+      10% { transform: scale(1.1); }
+      20% { transform: scale(1); }
+      30% { transform: scale(1.15); }
+      40% { transform: scale(1); }
+    }
+
+    #loadingMessage {
+      font-size: clamp(18px, 4.5vw, 24px);
+      font-weight: 600;
+      color: var(--yes);
+      text-align: center;
+      min-height: 60px;
+      padding: 0 20px;
+      line-height: 1.4;
+    }
+
+    #progressBarContainer {
+      width: min(350px, 85vw);
+      height: 20px;
+      background: rgba(220, 20, 60, 0.25);
+      border-radius: 999px;
+      overflow: hidden;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    #progressBar {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #dc143c, #b01030);
+      border-radius: 999px;
+      transition: width 0.3s ease;
+      box-shadow: 0 0 10px rgba(220, 20, 60, 0.6);
+    }
+
+    /* Question Reveal Screen Styles */
+    #questionRevealScreen {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 300px;
+      gap: 30px;
+    }
+
+    #revealText {
+      font-size: clamp(28px, 7vw, 48px);
+      font-weight: 700;
+      color: var(--yes);
+      text-align: center;
+      padding: 0 20px;
+      line-height: 1.4;
+    }
+
+    #revealText::after {
+      content: '|';
+      animation: blink 0.7s infinite;
+      margin-left: 2px;
+    }
+
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0; }
+    }
+
+    /* Main content - hidden initially */
+    #mainContent {
+      display: none;
     }
 
     .art {
@@ -60,6 +247,7 @@
       margin: 12px 0 18px;
       line-height: 1.3;
       padding: 0 10px;
+      color: var(--textOnCard);
     }
 
     .button-zone {
@@ -185,35 +373,180 @@
 
   <main class="card">
     
-    <!-- HEART GIF -->
-    <img
-    class="art"
-    src="https://media1.tenor.com/m/CS-Rjb7-UysAAAAC/mocha-milk.gif"
-    alt="Jumping heart"
-    />
+    <!-- INTRO SCREEN -->
+    <div id="introScreen">
+      <div id="typewriterText"></div>
+      <button id="continueBtn">Continue</button>
+    </div>
 
-    <h1>Cutieee will you be my valentine ? ❤️</h1>
+    <!-- BUT FIRST SCREEN -->
+    <div id="butFirstScreen">
+      <div id="butFirstText">But first... 💕</div>
+    </div>
 
-    <section class="button-zone" id="zone">
-      <button id="yesBtn">Yes</button>
-      <button id="noBtn">No</button>
-    </section>
+    <!-- LOADING SCREEN -->
+    <div id="loadingScreen">
+      <div id="heartContainer">
+        <div id="beatingHeart">❤️</div>
+      </div>
+      <div id="loadingMessage">Tap to load love...</div>
+      <div id="progressBarContainer">
+        <div id="progressBar"></div>
+      </div>
+    </div>
 
-    <!-- HINT -->
-    <div class="hint" id="hint">It will be an achievement if you are able to click no, I challenge you !😏</div>
+    <!-- QUESTION REVEAL SCREEN -->
+    <div id="questionRevealScreen">
+      <div id="revealText"></div>
+    </div>
 
-    <section class="result" id="result">
-      <h2>I knew it 🎉 </h2>
-      <p style="font-size: 30px; margin: 10px 0; color: #ff3b7a; font-weight: 600;">Thanks Babyyyyy 💕</p>
+    <!-- MAIN CONTENT -->
+    <div id="mainContent">
+      <!-- HEART GIF -->
       <img
-        class="fireworks"
-        src="https://media.tenor.com/sFStC1YwBzMAAAAj/milk-and-mocha-hug.gif"
-        alt="Fireworks"
+        class="art"
+        src="https://media1.tenor.com/m/CS-Rjb7-UysAAAAC/mocha-milk.gif"
+        alt="Jumping heart"
       />
-    </section>
+
+      <h1>Cutieee will you be my valentine ? ❤️</h1>
+
+      <section class="button-zone" id="zone">
+        <button id="yesBtn">Yes</button>
+        <button id="noBtn">No</button>
+      </section>
+
+      <!-- HINT -->
+      <div class="hint" id="hint">It will be an achievement if you are able to click no, I challenge you !😏</div>
+
+      <section class="result" id="result">
+        <h2>I knew it 🎉 </h2>
+        <p style="font-size: 30px; margin: 10px 0; color: var(--yes); font-weight: 600;">Thanks Babyyyyy 💕</p>
+        <img
+          class="fireworks"
+          src="https://media.tenor.com/sFStC1YwBzMAAAAj/milk-and-mocha-hug.gif"
+          alt="Fireworks"
+        />
+      </section>
+    </div>
   </main>
 
   <script>
+    /* ---------- TYPEWRITER EFFECT ---------- */
+    const typewriterElement = document.getElementById('typewriterText');
+    const continueBtn = document.getElementById('continueBtn');
+    const introScreen = document.getElementById('introScreen');
+    const butFirstScreen = document.getElementById('butFirstScreen');
+    const loadingScreen = document.getElementById('loadingScreen');
+    const questionRevealScreen = document.getElementById('questionRevealScreen');
+    const mainContent = document.getElementById('mainContent');
+    
+    const text = "Hello! I have a question for you...";
+    let charIndex = 0;
+
+    function typeWriter() {
+      if (charIndex < text.length) {
+        typewriterElement.textContent = text.substring(0, charIndex + 1);
+        charIndex++;
+        // Random typing speed between 50-100ms for more natural effect
+        setTimeout(typeWriter, Math.random() * 50 + 50);
+      } else {
+        // Show continue button after typing is complete
+        setTimeout(() => {
+          continueBtn.classList.add('show');
+        }, 300);
+      }
+    }
+
+    // Start typing effect when page loads
+    window.addEventListener('load', () => {
+      setTimeout(typeWriter, 500);
+    });
+
+    // Continue button click handler
+    continueBtn.addEventListener('click', () => {
+      introScreen.style.display = 'none';
+      butFirstScreen.style.display = 'flex';
+      
+      // Automatically transition to loading screen after 2 seconds
+      setTimeout(() => {
+        butFirstScreen.style.display = 'none';
+        loadingScreen.style.display = 'flex';
+      }, 2000);
+    });
+
+    /* ---------- LOADING SCREEN WITH HEART TAPPING ---------- */
+    const heartContainer = document.getElementById('heartContainer');
+    const loadingMessage = document.getElementById('loadingMessage');
+    const progressBar = document.getElementById('progressBar');
+
+    const messages = [
+      "Tap to load love...",
+      "Loading cuteness... 💕",
+      "Adding sweetness... 🍰",
+      "Sprinkling magic... ✨",
+      "Warming hearts... 🔥",
+      "Brewing affection... ☕",
+      "Gathering butterflies... 🦋",
+      "Creating memories... 📸",
+      "Filling with joy... 🌈",
+      "Almost there, cutie... 💖",
+      "Just a bit more... 💝",
+      "You're doing great! 🌟",
+      "Keep tapping, babe... 💗",
+      "One last tap... 💋"
+    ];
+
+    let tapCount = 0;
+    const totalTapsNeeded = 14;
+    let currentMessageIndex = 0;
+
+    heartContainer.addEventListener('click', () => {
+      tapCount++;
+      
+      // Update progress bar
+      const progress = (tapCount / totalTapsNeeded) * 100;
+      progressBar.style.width = progress + '%';
+      
+      // Change message based on tap count
+      if (tapCount < messages.length) {
+        loadingMessage.textContent = messages[tapCount];
+      }
+      
+      // Complete loading
+      if (tapCount >= totalTapsNeeded) {
+        setTimeout(() => {
+          loadingScreen.style.display = 'none';
+          questionRevealScreen.style.display = 'flex';
+          
+          // Start typewriter effect
+          setTimeout(() => {
+            typeRevealText();
+          }, 300);
+          
+          // Automatically transition to main content after typing completes + 1 second
+          setTimeout(() => {
+            questionRevealScreen.style.display = 'none';
+            mainContent.style.display = 'block';
+          }, 3500);
+        }, 500);
+      }
+    });
+
+    /* ---------- QUESTION REVEAL SCREEN ---------- */
+    const revealTextElement = document.getElementById('revealText');
+    const revealMessage = "Revealing your question...";
+    let revealCharIndex = 0;
+
+    function typeRevealText() {
+      if (revealCharIndex < revealMessage.length) {
+        revealTextElement.textContent = revealMessage.substring(0, revealCharIndex + 1);
+        revealCharIndex++;
+        setTimeout(typeRevealText, Math.random() * 50 + 50);
+      }
+    }
+
+    /* ---------- ORIGINAL CODE BELOW ---------- */
     const zone = document.getElementById("zone");
     const yesBtn = document.getElementById("yesBtn");
     const noBtn = document.getElementById("noBtn");
@@ -344,4 +677,3 @@
 </body>
 
 </html>
-
